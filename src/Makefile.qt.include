@@ -70,6 +70,7 @@ QT_MOC_CPP = \
   qt/moc_bip38tooldialog.cpp \
   qt/moc_bitcoinaddressvalidator.cpp \
   qt/moc_bitcoinamountfield.cpp \
+  qt/moc_bootstrapdialog.cpp \
   qt/moc_bitcoingui.cpp \
   qt/moc_bitcoinunits.cpp \
   qt/moc_blockexplorer.cpp \
@@ -79,6 +80,8 @@ QT_MOC_CPP = \
   qt/moc_csvmodelwriter.cpp \
   qt/moc_obfuscationconfig.cpp \
   qt/moc_editaddressdialog.cpp \
+  qt/moc_governancetable.cpp \
+  qt/moc_governancetablemodel.cpp \
   qt/moc_guiutil.cpp \
   qt/moc_intro.cpp \
   qt/moc_macdockiconhandler.cpp \
@@ -142,6 +145,7 @@ BITCOIN_QT_H = \
   qt/askpassphrasedialog.h \
   qt/bantablemodel.h \
   qt/bip38tooldialog.h \
+  qt/bootstrapdialog.h \
   qt/bitcoinaddressvalidator.h \
   qt/bitcoinamountfield.h \
   qt/bitcoingui.h \
@@ -153,6 +157,8 @@ BITCOIN_QT_H = \
   qt/csvmodelwriter.h \
   qt/obfuscationconfig.h \
   qt/editaddressdialog.h \
+  qt/governancetable.h \
+  qt/governancetablemodel.h \
   qt/guiconstants.h \
   qt/guiutil.h \
   qt/intro.h \
@@ -228,8 +234,11 @@ RES_ICONS = \
   qt/res/icons/eye_minus.png \
   qt/res/icons/eye_plus.png \
   qt/res/icons/filesave.png \
+  qt/res/icons/governance.png \
   qt/res/icons/history.png \
   qt/res/icons/key.png \
+  qt/res/icons/info.png \
+  qt/res/icons/link.png \
   qt/res/icons/lock_closed.png \
   qt/res/icons/lock_open.png \
   qt/res/icons/masternodes.png \
@@ -267,6 +276,7 @@ BITCOIN_QT_CPP = \
   qt/bitcoingui.cpp \
   qt/bitcoinunits.cpp \
   qt/blockexplorer.cpp \
+  qt/bootstrapdialog.cpp \
   qt/clientmodel.cpp \
   qt/csvmodelwriter.cpp \
   qt/guiutil.cpp \
@@ -300,6 +310,8 @@ BITCOIN_QT_CPP += \
   qt/coincontroltreewidget.cpp \
   qt/obfuscationconfig.cpp \
   qt/editaddressdialog.cpp \
+  qt/governancetable.cpp \
+  qt/governancetablemodel.cpp \
   qt/masternodelist.cpp \
   qt/multisenddialog.cpp \
   qt/multisigdialog.cpp\
@@ -405,7 +417,7 @@ qt_colx_qt_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
 endif
 qt_colx_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBBITCOIN_ZEROCOIN) $(LIBLEVELDB) $(LIBMEMENV) \
   $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) $(CURL_LIBS) \
-  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(LIBMINIZIP)
 qt_colx_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 qt_colx_qt_LIBTOOLFLAGS = --tag CXX
 

@@ -6,6 +6,7 @@
 
 #include "bitcoingui.h"
 
+#include "context.h"
 #include "bitcoinunits.h"
 #include "clientmodel.h"
 #include "guiconstants.h"
@@ -18,6 +19,8 @@
 #include "optionsmodel.h"
 #include "rpcconsole.h"
 #include "utilitydialog.h"
+#include "bootstrapdialog.h"
+#include "bootstrapmodel.h"
 
 #ifdef ENABLE_WALLET
 #include "blockexplorer.h"
@@ -35,6 +38,7 @@
 #include "util.h"
 
 #include <iostream>
+#include <memory>
 
 #include <QAction>
 #include <QApplication>
@@ -108,6 +112,7 @@ BitcoinGUI::BitcoinGUI(const NetworkStyle* networkStyle, QWidget* parent) : QMai
                                                                             notificator(0),
                                                                             rpcConsole(0),
                                                                             explorerWindow(0),
+                                                                            bootstrapWindow(0),
                                                                             prevBlocks(0),
                                                                             spinnerFrame(0)
 {
@@ -146,6 +151,8 @@ BitcoinGUI::BitcoinGUI(const NetworkStyle* networkStyle, QWidget* parent) : QMai
 #endif
 
     rpcConsole = new RPCConsole(enableWallet ? this : 0);
+    bootstrapWindow = new BootstrapDialog(GetContext().GetBootstrapModel(), this);
+
 #ifdef ENABLE_WALLET
     if (enableWallet) {
         /** Create wallet frame*/
@@ -263,8 +270,11 @@ BitcoinGUI::BitcoinGUI(const NetworkStyle* networkStyle, QWidget* parent) : QMai
 
     connect(openBlockExplorerAction, SIGNAL(triggered()), explorerWindow, SLOT(show()));
 
+    connect(openBootstrapAction, SIGNAL(triggered()), bootstrapWindow, SLOT(show()));
+
     // prevents an open debug window from becoming stuck/unusable on client shutdown
     connect(quitAction, SIGNAL(triggered()), explorerWindow, SLOT(hide()));
+    connect(quitAction, SIGNAL(triggered()), bootstrapWindow, SLOT(hide()));
 
     // Install event filter to be able to catch status tip events (QEvent::StatusTip)
     this->installEventFilter(this);
@@ -362,7 +372,8 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 #ifdef ENABLE_WALLET
 
     QSettings settings;
-    if (settings.value("fShowMasternodesTab").toBool()) {
+    QVariant showMNTab = OptionsModel::GetOption(OptionsModel::ShowMasternodesTab);
+    if (showMNTab.isValid() && showMNTab.toBool()) {
         masternodeAction = new QAction(QIcon(":/icons/masternodes"), tr("&Masternodes"), this);
         masternodeAction->setStatusTip(tr("Browse masternodes"));
         masternodeAction->setToolTip(masternodeAction->statusTip());
@@ -377,6 +388,18 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
         connect(masternodeAction, SIGNAL(triggered()), this, SLOT(gotoMasternodePage()));
     }
 
+    QVariant showGovernanceTab = OptionsModel::GetOption(OptionsModel::ShowGovernanceTab);
+    if (showGovernanceTab.isValid() && showGovernanceTab.toBool()) {
+        governanceAction = new QAction(QIcon(":/icons/governance"), tr("&Governance"), this);
+        governanceAction->setStatusTip(tr("Browse budgets"));
+        governanceAction->setToolTip(governanceAction->statusTip());
+        governanceAction->setCheckable(true);
+
+        tabGroup->addAction(governanceAction);
+        connect(governanceAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+        connect(governanceAction, SIGNAL(triggered()), this, SLOT(gotoGovernancePage()));
+    }
+	
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
     // can be triggered from the tray menu, and need to show the GUI to be useful.
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -441,6 +464,8 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     openPeersAction->setStatusTip(tr("Show peers info"));
     openRepairAction = new QAction(QIcon(":/icons/options"), tr("Wallet &Repair"), this);
     openRepairAction->setStatusTip(tr("Show wallet repair options"));
+    openBootstrapAction = new QAction(QIcon(":/icons/options"), tr("&Blockchain Bootstrap"), this);
+    openBootstrapAction->setStatusTip(tr("Reload blockchain from the cloud or file"));
     openConfEditorAction = new QAction(QIcon(":/icons/edit"), tr("Open Wallet &Configuration File"), this);
     openConfEditorAction->setStatusTip(tr("Open configuration file"));
     openMNConfEditorAction = new QAction(QIcon(":/icons/edit"), tr("Open &Masternode Configuration File"), this);
@@ -543,6 +568,7 @@ void BitcoinGUI::createMenuBar()
         tools->addAction(openNetworkAction);
         tools->addAction(openPeersAction);
         tools->addAction(openRepairAction);
+        tools->addAction(openBootstrapAction);
         tools->addSeparator();
         tools->addAction(openConfEditorAction);
         tools->addAction(openMNConfEditorAction);
@@ -566,11 +592,13 @@ void BitcoinGUI::createToolBars()
         // Add logo at the top of the toolbar
         QLabel* logo = new QLabel(this);
         logo->setObjectName("ToolbarLogo");
+		/*
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Ignored);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(logo->sizePolicy().hasHeightForWidth());
         logo->setSizePolicy(sizePolicy);
+		*/
         logo->setMinimumSize(QSize(180, 72));
         logo->setPixmap(QPixmap(QString::fromUtf8(":/images/colx_logo_horizontal")));
         toolbar->addWidget(logo);
@@ -581,10 +609,12 @@ void BitcoinGUI::createToolBars()
         toolbar->addAction(privacyAction);
         toolbar->addAction(historyAction);
         toolbar->addAction(privacyAction);
-        QSettings settings;
-        if (settings.value("fShowMasternodesTab").toBool()) {
+        if (masternodeAction)
             toolbar->addAction(masternodeAction);
-        }
+
+        if (governanceAction)
+            toolbar->addAction(governanceAction);
+
         toolbar->setMovable(false); // remove unused icon in upper left corner
         toolbar->setOrientation(Qt::Vertical);
         toolbar->setIconSize(QSize(60,54));
@@ -687,10 +717,12 @@ void BitcoinGUI::setWalletActionsEnabled(bool enabled)
     receiveCoinsAction->setEnabled(enabled);
     privacyAction->setEnabled(enabled);
     historyAction->setEnabled(enabled);
-    QSettings settings;
-    if (masternodeAction && settings.value("fShowMasternodesTab").toBool()) {
+    if (masternodeAction)
         masternodeAction->setEnabled(enabled);
-    }
+
+    if (governanceAction)
+        governanceAction->setEnabled(enabled);
+
     encryptWalletAction->setEnabled(enabled);
     backupWalletAction->setEnabled(enabled);
     changePassphraseAction->setEnabled(enabled);
@@ -755,6 +787,7 @@ void BitcoinGUI::createTrayIconMenu()
     trayIconMenu->addAction(openNetworkAction);
     trayIconMenu->addAction(openPeersAction);
     trayIconMenu->addAction(openRepairAction);
+    trayIconMenu->addAction(openBootstrapAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(openConfEditorAction);
     trayIconMenu->addAction(openMNConfEditorAction);
@@ -825,10 +858,19 @@ void BitcoinGUI::gotoHistoryPage()
 
 void BitcoinGUI::gotoMasternodePage()
 {
-    QSettings settings;
-    if (settings.value("fShowMasternodesTab").toBool()) {
+    if (masternodeAction) {
         masternodeAction->setChecked(true);
-        if (walletFrame) walletFrame->gotoMasternodePage();
+        if (walletFrame)
+            walletFrame->gotoMasternodePage();
+    }
+}
+
+void BitcoinGUI::gotoGovernancePage()
+{
+    if (governanceAction) {
+        governanceAction->setChecked(true);
+        if (walletFrame)
+            walletFrame->gotoGovernancePage();
     }
 }
 
