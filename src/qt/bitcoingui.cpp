@@ -588,6 +588,7 @@ void BitcoinGUI::createToolBars()
     if (walletFrame) {
         QToolBar* toolbar = new QToolBar(tr("Tabs toolbar"));
         toolbar->setObjectName("Main-Toolbar"); // Name for CSS addressing
+<<<<<<< HEAD
         toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         // Add logo at the top of the toolbar
         QLabel* logo = new QLabel(this);
@@ -602,6 +603,13 @@ void BitcoinGUI::createToolBars()
         logo->setMinimumSize(QSize(180, 72));
         logo->setPixmap(QPixmap(QString::fromUtf8(":/images/colx_logo_horizontal")));
         toolbar->addWidget(logo);
+=======
+        toolbar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+//        // Add some empty space at the top of the toolbars
+//        QAction* spacer = new QAction(this);
+//        toolbar->addAction(spacer);
+//        toolbar->widgetForAction(spacer)->setObjectName("ToolbarSpacer");
+>>>>>>> parent of dc0032450... UI Update to Colx 1.1.1 with all the cool things from the web version
 
         toolbar->addAction(overviewAction);
         toolbar->addAction(sendCoinsAction);
@@ -617,11 +625,8 @@ void BitcoinGUI::createToolBars()
 
         toolbar->setMovable(false); // remove unused icon in upper left corner
         toolbar->setOrientation(Qt::Vertical);
-        toolbar->setIconSize(QSize(60,54));
+        toolbar->setIconSize(QSize(40,40));
         overviewAction->setChecked(true);
-        QLayout* lay = toolbar->layout();
-        for(int i = 0; i < lay->count(); ++i)
-            lay->itemAt(i)->setAlignment(Qt::AlignLeft);
 
         /** Create additional container for toolbar and walletFrame and make it the central widget.
             This is a workaround mostly for toolbar styling on Mac OS but should work fine for every other OSes too.
