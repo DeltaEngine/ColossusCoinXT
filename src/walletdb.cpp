@@ -936,7 +936,7 @@ bool BackupWallet(const CWallet& wallet, const string& strDest)
                 }
             }
         }
-        MilliSleep(100); // TODO: infinite loop detected here
+        MilliSleep(100);
     }
     return false;
 }

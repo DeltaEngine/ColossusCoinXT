@@ -7,6 +7,7 @@
 
 #include "amount.h"
 #include "askpassphrasedialog.h"
+#include "masternodelist.h"
 
 #include <QStackedWidget>
 
@@ -20,8 +21,6 @@ class SendCoinsRecipient;
 class TransactionView;
 class WalletModel;
 class BlockExplorer;
-class MasternodeList;
-class GovernanceTable;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -59,22 +58,21 @@ public:
     void showOutOfSyncWarning(bool fShow);
 
 private:
-    ClientModel* clientModel = nullptr;
-    WalletModel* walletModel = nullptr;
+    ClientModel* clientModel;
+    WalletModel* walletModel;
 
-    OverviewPage* overviewPage = nullptr;
-    QWidget* transactionsPage = nullptr;
-    ReceiveCoinsDialog* receiveCoinsPage = nullptr;
-    PrivacyDialog* privacyPage = nullptr;
-    SendCoinsDialog* sendCoinsPage = nullptr;
-    BlockExplorer* explorerWindow = nullptr;
-    MasternodeList* masternodeListPage = nullptr;
-    GovernanceTable* governanceListPage = nullptr;
+    OverviewPage* overviewPage;
+    QWidget* transactionsPage;
+    ReceiveCoinsDialog* receiveCoinsPage;
+    PrivacyDialog* privacyPage;
+    SendCoinsDialog* sendCoinsPage;
+    BlockExplorer* explorerWindow;
+    MasternodeList* masternodeListPage;
 
-    TransactionView* transactionView = nullptr;
+    TransactionView* transactionView;
 
-    QProgressDialog* progressDialog = nullptr;
-    QLabel* transactionSum = nullptr;
+    QProgressDialog* progressDialog;
+    QLabel* transactionSum;
 
 public slots:
     /** Switch to overview (home) page */
@@ -83,8 +81,6 @@ public slots:
     void gotoHistoryPage();
     /** Switch to masternode page */
     void gotoMasternodePage();
-    /** Switch to governance page */
-    void gotoGovernancePage();
     /** Switch to explorer page */
     void gotoBlockExplorerPage();
     /** Switch to privacy page */

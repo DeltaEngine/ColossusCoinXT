@@ -509,27 +509,27 @@ public:
         return (nTime < GetTime() - (60 * 5));
     }
 
-    std::string GetName() const { return strProposalName; }
-    std::string GetURL() const { return strURL; }
-    int GetBlockStart() const { return nBlockStart; }
-    int GetBlockEnd() const { return nBlockEnd; }
-    CScript GetPayee() const { return address; }
-    int GetTotalPaymentCount() const;
-    int GetRemainingPaymentCount() const;
-    int GetBlockStartCycle() const;
-    int GetBlockCurrentCycle() const;
-    int GetBlockEndCycle() const;
+    std::string GetName() { return strProposalName; }
+    std::string GetURL() { return strURL; }
+    int GetBlockStart() { return nBlockStart; }
+    int GetBlockEnd() { return nBlockEnd; }
+    CScript GetPayee() { return address; }
+    int GetTotalPaymentCount();
+    int GetRemainingPaymentCount();
+    int GetBlockStartCycle();
+    int GetBlockCurrentCycle();
+    int GetBlockEndCycle();
     double GetRatio();
-    int GetYeas() const;
-    int GetNays() const;
-    int GetAbstains() const;
-    CAmount GetAmount() const { return nAmount; }
+    int GetYeas();
+    int GetNays();
+    int GetAbstains();
+    CAmount GetAmount() { return nAmount; }
     void SetAllotted(CAmount nAllotedIn) { nAlloted = nAllotedIn; }
     CAmount GetAllotted() { return nAlloted; }
 
     void CleanAndRemove(bool fSignatureCheck);
 
-    uint256 GetHash() const
+    uint256 GetHash()
     {
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << strProposalName;

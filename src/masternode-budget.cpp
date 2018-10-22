@@ -1660,11 +1660,11 @@ double CBudgetProposal::GetRatio()
     return ((double)(yeas) / (double)(yeas + nays));
 }
 
-int CBudgetProposal::GetYeas() const
+int CBudgetProposal::GetYeas()
 {
     int ret = 0;
 
-    std::map<uint256, CBudgetVote>::const_iterator it = mapVotes.begin();
+    std::map<uint256, CBudgetVote>::iterator it = mapVotes.begin();
     while (it != mapVotes.end()) {
         if ((*it).second.nVote == VOTE_YES && (*it).second.fValid) ret++;
         ++it;
@@ -1673,11 +1673,11 @@ int CBudgetProposal::GetYeas() const
     return ret;
 }
 
-int CBudgetProposal::GetNays() const
+int CBudgetProposal::GetNays()
 {
     int ret = 0;
 
-    std::map<uint256, CBudgetVote>::const_iterator it = mapVotes.begin();
+    std::map<uint256, CBudgetVote>::iterator it = mapVotes.begin();
     while (it != mapVotes.end()) {
         if ((*it).second.nVote == VOTE_NO && (*it).second.fValid) ret++;
         ++it;
@@ -1686,11 +1686,11 @@ int CBudgetProposal::GetNays() const
     return ret;
 }
 
-int CBudgetProposal::GetAbstains() const
+int CBudgetProposal::GetAbstains()
 {
     int ret = 0;
 
-    std::map<uint256, CBudgetVote>::const_iterator it = mapVotes.begin();
+    std::map<uint256, CBudgetVote>::iterator it = mapVotes.begin();
     while (it != mapVotes.end()) {
         if ((*it).second.nVote == VOTE_ABSTAIN && (*it).second.fValid) ret++;
         ++it;
@@ -1699,14 +1699,14 @@ int CBudgetProposal::GetAbstains() const
     return ret;
 }
 
-int CBudgetProposal::GetBlockStartCycle() const
+int CBudgetProposal::GetBlockStartCycle()
 {
     //end block is half way through the next cycle (so the proposal will be removed much after the payment is sent)
 
     return nBlockStart - nBlockStart % GetBudgetPaymentCycleBlocks();
 }
 
-int CBudgetProposal::GetBlockCurrentCycle() const
+int CBudgetProposal::GetBlockCurrentCycle()
 {
     CBlockIndex* pindexPrev = chainActive.Tip();
     if (pindexPrev == NULL) return -1;
@@ -1716,7 +1716,7 @@ int CBudgetProposal::GetBlockCurrentCycle() const
     return pindexPrev->nHeight - pindexPrev->nHeight % GetBudgetPaymentCycleBlocks();
 }
 
-int CBudgetProposal::GetBlockEndCycle() const
+int CBudgetProposal::GetBlockEndCycle()
 {
     // DRAGAN: pivx change only, but might be important // Q: 
     // XX42: right now single payment proposals have nBlockEnd have a cycle too early!
@@ -1729,12 +1729,12 @@ int CBudgetProposal::GetBlockEndCycle() const
 
 }
 
-int CBudgetProposal::GetTotalPaymentCount() const
+int CBudgetProposal::GetTotalPaymentCount()
 {
     return (GetBlockEndCycle() - GetBlockStartCycle()) / GetBudgetPaymentCycleBlocks();
 }
 
-int CBudgetProposal::GetRemainingPaymentCount() const
+int CBudgetProposal::GetRemainingPaymentCount()
 {
     // If this budget starts in the future, this value will be wrong
     int nPayments = (GetBlockEndCycle() - GetBlockCurrentCycle()) / GetBudgetPaymentCycleBlocks() - 1;

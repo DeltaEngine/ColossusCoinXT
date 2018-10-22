@@ -94,11 +94,8 @@ void OptionsModel::Init()
 
     nAnonymizePivxAmount = settings.value("nAnonymizePivxAmount").toLongLong();
 
-    if (!settings.contains(OptionIDToString(ShowMasternodesTab)))
-        settings.setValue(OptionIDToString(ShowMasternodesTab), masternodeConfig.getCount());
-
-    if (!settings.contains(OptionIDToString(ShowGovernanceTab)))
-        settings.setValue(OptionIDToString(ShowGovernanceTab), masternodeConfig.getCount());
+    if (!settings.contains("fShowMasternodesTab"))
+        settings.setValue("fShowMasternodesTab", masternodeConfig.getCount());
 
     // These are shared with the core or have a command-line parameter
     // and we want command-line parameters to overwrite the GUI settings.
@@ -230,9 +227,7 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
         case SpendZeroConfChange:
             return settings.value("bSpendZeroConfChange");
         case ShowMasternodesTab:
-            return settings.value(OptionIDToString(ShowMasternodesTab));
-        case ShowGovernanceTab:
-            return settings.value(OptionIDToString(ShowGovernanceTab));
+            return settings.value("fShowMasternodesTab");
 #endif
         case StakeSplitThreshold:
             if (pwalletMain)
@@ -334,14 +329,8 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
             }
             break;
         case ShowMasternodesTab:
-            if (settings.value(OptionIDToString(ShowMasternodesTab)) != value) {
-                settings.setValue(OptionIDToString(ShowMasternodesTab), value);
-                setRestartRequired(true);
-            }
-            break;
-        case ShowGovernanceTab:
-            if (settings.value(OptionIDToString(ShowGovernanceTab)) != value) {
-                settings.setValue(OptionIDToString(ShowGovernanceTab), value);
+            if (settings.value("fShowMasternodesTab") != value) {
+                settings.setValue("fShowMasternodesTab", value);
                 setRestartRequired(true);
             }
             break;
@@ -494,28 +483,4 @@ bool OptionsModel::isRestartRequired()
 {
     QSettings settings;
     return settings.value("fRestartRequired", false).toBool();
-}
-
-QString OptionsModel::OptionIDToString(OptionID id)
-{
-    switch (id) {
-    case ShowMasternodesTab:
-        return "fShowMasternodesTab";
-    case ShowGovernanceTab:
-        return "fShowGovernanceTab";
-    default:
-        assert(false); // add please new option here!
-        return QString();
-    }
-}
-
-QVariant OptionsModel::GetOption(OptionID id)
-{
-    QString name = OptionIDToString(id);
-    if (name.isEmpty())
-        return QVariant();
-    else {
-        QSettings settings;
-        return settings.value(name);
-    }
 }

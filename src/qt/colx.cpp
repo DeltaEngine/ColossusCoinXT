@@ -58,6 +58,7 @@
 #include <QTranslator>
 #include <QFileInfo>
 #include <QString>
+#include <QFontDatabase>
 
 #if defined(QT_STATICPLUGIN)
 #include <QtPlugin>
@@ -569,6 +570,30 @@ int main(int argc, char* argv[])
     QApplication::setOrganizationName(QAPP_ORG_NAME);
     QApplication::setOrganizationDomain(QAPP_ORG_DOMAIN);
     QApplication::setApplicationName(QAPP_APP_NAME_DEFAULT);
+
+/*try1
+int id = QFontDatabase::addApplicationFont(":/fonts/share-tech-mono-v7-latin-regular.ttf");
+if (id == -1)
+  QMessageBox::warning(0, "ColossusXT", (QString)"Loading ColossusXT font failed");
+else {
+  QString family = QFontDatabase::applicationFontFamilies(id).at(0);
+  QApplication::setFont(QFont(family));
+}
+*/
+
+QFile res(":/fonts/share-tech-mono-v7-latin-regular");
+if (res.open(QIODevice::ReadOnly) == false)
+  QMessageBox::warning(0, "ColossusXT", (QString)"Loading ColossusXT font file failed");
+else {
+  int id = QFontDatabase::addApplicationFontFromData(res.readAll());
+  if (id == -1)
+    QMessageBox::warning(0, "ColossusXT", (QString)"Loading ColossusXT font failed");
+  else {
+    QString family = QFontDatabase::applicationFontFamilies(id).at(0);
+    QApplication::setFont(QFont(family));
+  }
+}
+
     GUIUtil::SubstituteFonts(GetLangTerritory());
 
     /// 4. Initialization of translations, so that intro dialog is in user's language

@@ -22,9 +22,6 @@
 #include "transactiontablemodel.h"
 #include "transactionview.h"
 #include "walletmodel.h"
-#include "masternodelist.h"
-#include "governancetable.h"
-#include "governancetablemodel.h"
 
 #include "ui_interface.h"
 
@@ -38,8 +35,10 @@
 #include <QSettings>
 #include <QVBoxLayout>
 
-WalletView::WalletView(QWidget* parent) : QStackedWidget(parent)
-{
+WalletView::WalletView(QWidget* parent) : QStackedWidget(parent),
+                                          clientModel(0),
+                                          walletModel(0)
+{   
     // Create tabs
     overviewPage = new OverviewPage();
     explorerWindow = new BlockExplorer(this);
@@ -101,7 +100,7 @@ WalletView::WalletView(QWidget* parent) : QStackedWidget(parent)
 
     // Sum of selected transactions
     QLabel* transactionSumLabel = new QLabel();                // Label
-    transactionSumLabel->setObjectName("transactionSumLabel"); // Label ID as CSS-reference
+    transactionSumLabel->setObjectName("label_4"); // Label ID as CSS-reference
     transactionSumLabel->setText(tr("Selected amount:"));
     hbox_buttons->addWidget(transactionSumLabel);
 
@@ -126,16 +125,10 @@ WalletView::WalletView(QWidget* parent) : QStackedWidget(parent)
     addWidget(sendCoinsPage);
     addWidget(explorerWindow);
 
-    QVariant showMNTab = OptionsModel::GetOption(OptionsModel::ShowMasternodesTab);
-    if (showMNTab.isValid() && showMNTab.toBool()) {
+    QSettings settings;
+    if (settings.value("fShowMasternodesTab").toBool()) {
         masternodeListPage = new MasternodeList();
         addWidget(masternodeListPage);
-    }
-
-    QVariant showGovernanceTab = OptionsModel::GetOption(OptionsModel::ShowGovernanceTab);
-    if (showGovernanceTab.isValid() && showGovernanceTab.toBool()) {
-        governanceListPage = new GovernanceTable();
-        addWidget(governanceListPage);
     }
 
     // Clicking on a transaction on the overview pre-selects the transaction on the transaction history page
@@ -184,13 +177,9 @@ void WalletView::setClientModel(ClientModel* clientModel)
 
     overviewPage->setClientModel(clientModel);
     sendCoinsPage->setClientModel(clientModel);
-
-    if (masternodeListPage)
+    QSettings settings;
+    if (settings.value("fShowMasternodesTab").toBool()) {
         masternodeListPage->setClientModel(clientModel);
-
-    if (governanceListPage) {
-        GovernanceTableModelPtr model(new GovernanceTableModel(clientModel));
-        governanceListPage->setModel(model);
     }
 }
 
@@ -201,10 +190,10 @@ void WalletView::setWalletModel(WalletModel* walletModel)
     // Put transaction list in tabs
     transactionView->setModel(walletModel);
     overviewPage->setWalletModel(walletModel);
-
-    if (masternodeListPage)
+    QSettings settings;
+    if (settings.value("fShowMasternodesTab").toBool()) {
         masternodeListPage->setWalletModel(walletModel);
-
+    }
     privacyPage->setModel(walletModel);
     receiveCoinsPage->setModel(walletModel);
     sendCoinsPage->setModel(walletModel);
@@ -267,14 +256,10 @@ void WalletView::gotoBlockExplorerPage()
 
 void WalletView::gotoMasternodePage()
 {
-    if (masternodeListPage)
+    QSettings settings;
+    if (settings.value("fShowMasternodesTab").toBool()) {
         setCurrentWidget(masternodeListPage);
-}
-
-void WalletView::gotoGovernancePage()
-{
-    if (governanceListPage)
-        setCurrentWidget(governanceListPage);
+    }
 }
 
 void WalletView::gotoReceiveCoinsPage()

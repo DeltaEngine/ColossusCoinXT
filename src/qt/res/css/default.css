@@ -6,6 +6,9 @@ border-top:0px solid #000;
 margin:0;
 padding:0;
 }
+QFrame#frame_BG{
+margin-left:5px;
+}
 
 QStatusBar {
 background-color:#ffffff;
@@ -43,20 +46,20 @@ color:#333;
 }
 
 QToolBar {
-background-color:#212121;
+background-color:#252525;
 border:0px solid #000;
 padding:0;
 margin:0;
 }
 
 ToolbarLogo {
-width: 170px;
-background-color:#212121;
+width: 190px;
+background-color:#252525;
 }
-QToolBar QToolButton { width: 170px; }
+QToolBar QToolButton { width: 194px; }
 
 QToolBar > QToolButton {
-background-color:#212121;
+background-color:#252525;
 border:0px solid #000;
 min-height:2.5em;
 padding: 0em 0.4em;
@@ -335,6 +338,7 @@ border:1px solid #333;
 
 QTableView::item { /* Table Item */
 background-color:#fcfcfc;
+color:#333;
 font-size:12px;
 }
 
@@ -826,7 +830,7 @@ font-weight:normal;
 min-height:30px;
 }
 
-QWidget .QFrame#frame .QLabel#label_5 { /* Wallet Label */
+QWidget .QFrame#frame .QLabel#label_5, QWidget .QFrame#frame .QLabel#label_5_normal { /* Wallet Label */
 qproperty-alignment: 'AlignVCenter | AlignRight';
 min-width:160px;
 background-color:transparent;
@@ -1653,12 +1657,12 @@ margin-right:1px;
 }
 
 QLabel#transactionSumLabel { /* Example of setObjectName for widgets without name */
-color:#333333;
+color:#fff;
 font-weight:bold;
 }
  
 QLabel#transactionSum { /* Example of setObjectName for widgets without name */
-color:#333333;
+color:#fff;
 }
 
 /**************************** TRANSACTION DETAILS DIALOG ********************************/
@@ -1694,24 +1698,24 @@ color:#818181;
 QFrame#frame_Header {
 margin-left:16px;
 color:#fff;
-font-size: 34px;
+font-size: 32px;
 }
 QLabel#labelOverviewHeaderLeft {
-font-size: 34px;
+font-size: 32px;
 color:#fff;
 }
 QLabel#transactionSumLabel{
 color:#fff;
-font-size: 34px;
+font-size: 32px;
 }
 QLabel#label_4, QLabel#label_5z, QLabel#label_5, QLabel#label_5z_3{
-font-size:24px;
+font-size:22px;
 }
 QLabel#labelBalanceTextz, QLabel#labelTotalTextz, QLabel#labelBalanceText, QLabel#labelPendingText, QLabel#labelImmatureText, QLabel#labelLockedBalanceText, QLabel#labelTotalText, QLabel#labelzBalanceMatureText, QLabel#labelzBalanceUnconfirmedText, QLabel#labelzBalanceImmatureText, QLabel#labelzBalanceText{
 font-size:11px;
 }
 QLabel#labelBalancez, QLabel#labelTotalz, QLabel#labelBalance, QLabel#labelUnconfirmed, QLabel#labelImmature, QLabel#labelLockedBalance, QLabel#labelTotal, QLabel#labelzBalanceMature, QLabel#labelzBalanceUnconfirmed, QLabel#labelzBalanceImmature, QLabel#labelzBalance{
-font-size:28px;
+font-size:26px;
 }
 
 QWidget#PrivacyDialog {
