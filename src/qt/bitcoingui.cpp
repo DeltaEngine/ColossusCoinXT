@@ -567,13 +567,6 @@ void BitcoinGUI::createToolBars()
         // Add logo at the top of the toolbar
         QLabel* logo = new QLabel(this);
         logo->setObjectName("ToolbarLogo");
-		/*
-        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Ignored);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(logo->sizePolicy().hasHeightForWidth());
-        logo->setSizePolicy(sizePolicy);
-		*/
         logo->setMinimumSize(QSize(209, 129));
         logo->setPixmap(QPixmap(QString::fromUtf8(":/images/colx_logo_horizontal")));
         toolbar->addWidget(logo);
