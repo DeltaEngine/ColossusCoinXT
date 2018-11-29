@@ -255,6 +255,9 @@ private slots:
 
     /** Show progress dialog e.g. for verifychain */
     void showProgress(const QString& title, int nProgress);
+
+    /** Show progress bar for downloading update */
+    void refreshDownloadProgress(const QString& title, int nProgress);
 };
 
 class UnitDisplayStatusBarControl : public QLabel
