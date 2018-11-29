@@ -22,7 +22,6 @@
 #include "wallet.h"
 #include "curl.h"
 #include "context.h"
-#include "autoupdatemodel.h"
 
 #ifdef WIN32
 #include <string.h>
@@ -1790,7 +1789,7 @@ static bool ThreadCheckForUpdates(CContext& context)
 
     CUrl urlRelease;
     if (!IsUpdateAvailable(urlRelease)) {
-        context.GetAutoUpdateModel()->SetUpdateAvailable(false, "", "");
+        context.SetUpdateAvailable(false, "", "");
         return true; // continue thread execution
     }
 
@@ -1813,7 +1812,7 @@ static bool ThreadCheckForUpdates(CContext& context)
         LogPrintf("%s: %s\n", __func__, error);
         return true; // continue thread execution
     } else {
-        context.GetAutoUpdateModel()->SetUpdateAvailable(true, urlRelease, urlPath);
+        context.SetUpdateAvailable(true, urlRelease, urlPath);
         uiInterface.NotifyUpdateAvailable();
 
         DebugPrintf("%s: update found, exit thread.\n", __func__);

@@ -108,7 +108,6 @@ BITCOIN_CORE_H = \
   alert.h \
   allocators.h \
   amount.h \
-  autoupdatemodel.h \
   base58.h \
   bip38.h \
   bloom.h \
@@ -405,7 +404,6 @@ libbitcoin_util_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_util_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_util_a_SOURCES = \
   allocators.cpp \
-  autoupdatemodel.cpp \
   compat/strnlen.cpp \
   compat/glibc_sanity.cpp \
   compat/glibcxx_sanity.cpp \

@@ -72,7 +72,6 @@ private slots:
     void updateAlerts(const QString& warnings);
     void updateWatchOnlyLabels(bool showWatchOnly);
     void updateNewVersionAvailability();
-    void updateNewVersionDownloadProgress(const QString& msg, int nProgress);
 };
 
 #endif // BITCOIN_QT_OVERVIEWPAGE_H

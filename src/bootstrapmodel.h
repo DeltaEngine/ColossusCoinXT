@@ -62,6 +62,8 @@ enum class BootstrapMode {
 class BootstrapModel
 {
 public:
+    BootstrapModel();
+
     ~BootstrapModel();
 
     bool IsBootstrapRunning() const;
@@ -170,12 +172,6 @@ public:
 
     /** Notify that latest async operation RunStageII has just completed */
     boost::signals2::signal<void(bool succes, const std::string& error)> NotifyBootstrapCompletedII;
-
-private:
-    BootstrapModel();
-    BootstrapModel(const BootstrapModel&);
-    BootstrapModel& operator=(const BootstrapModel&);
-    friend class CContext;
 
 private:
     void ResetState();
